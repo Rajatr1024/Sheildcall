@@ -1,32 +1,24 @@
 from fastapi import FastAPI
-# from routes import twilio_routes
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from routes import upload_routes
+from routes import call_routes
 
 app = FastAPI(title="AI Call Intelligence API")
 
+# Routers
 app.include_router(upload_routes.router)
-# app.include_router(twilio_routes.router)
+app.include_router(call_routes.router)
 
-@app.get("/calls")
-def list_calls():
+# Static audio serving
+app.mount(
+    "/audio",
+    StaticFiles(directory="storage/audio"),
+    name="audio"
+)
 
-    return [
-        {
-            "id": "call_001",
-            "filename": "test1.mp3",
-            "risk_level": "high",
-            "sentiment": "negative",
-            "date": "2026-02-24",
-        },
-        {
-            "id": "call_002",
-            "filename": "support_call.mp3",
-            "risk_level": "low",
-            "sentiment": "neutral",
-            "date": "2026-02-23",
-        },
-    ]
-
+# Latest fallback endpoint (keep for dashboard default)
 @app.get("/latest")
 def get_latest_call():
     return {
@@ -35,7 +27,10 @@ def get_latest_call():
         "risk_flags": [],
         "confidence": {"overall_score": 0.75},
         "conversation_analytics": {
-            "talk_ratio": {"SPEAKER_00": 0.6, "SPEAKER_01": 0.4},
+            "talk_ratio": {
+                "SPEAKER_00": 0.6,
+                "SPEAKER_01": 0.4
+            },
             "total_silence_seconds": 5,
             "interruptions": 1,
         },
@@ -51,11 +46,8 @@ def get_latest_call():
             {"speaker": "SPEAKER_01", "text": "Hi there"},
         ],
     }
-    
-    
 
-from fastapi.middleware.cors import CORSMiddleware
-
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],

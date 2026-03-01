@@ -1,7 +1,7 @@
 import SummaryCard from "@/components/SummaryCard";
 import RiskPanel from "@/components/RiskPanel";
 import ConfidenceCard from "@/components/ConfidenceCard";
-import TranscriptViewer from "@/components/TranscriptViewer";
+import PlaybackSection from "@/components/PlaybackSection";
 import TalkRatioChart from "@/components/TalkRatioChart";
 import SilenceCard from "@/components/SilenceCard";
 import InterruptionCard from "@/components/InterruptionCard";
@@ -13,10 +13,11 @@ import { fetchCallData } from "@/lib/api";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }) {
 
-  const id = searchParams.id || "latest";
+  const params = await searchParams;
+  const id = params?.id || "latest";
   const data = await fetchCallData(id);
   const {
     summary,
@@ -27,6 +28,11 @@ export default async function Home({
     conversation_analytics,
     insights,
   } = data;
+  
+  const audioUrl =
+  id !== "latest" && data.audio_file
+    ? `http://localhost:8000/audio/${data.audio_file}`
+    : undefined;
 
   return (
     <main className="min-h-screen bg-gray-100 p-8">
@@ -61,7 +67,12 @@ export default async function Home({
           />
         </div>
 
-        <TranscriptViewer transcript={transcript} />
+        {audioUrl && (
+  <PlaybackSection
+    audioUrl={audioUrl}
+    transcript={transcript}
+  />
+)}
 
         <div className="grid grid-cols-3 gap-6">
           <TalkRatioChart

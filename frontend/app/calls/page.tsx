@@ -1,60 +1,44 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { fetchCalls } from "@/lib/api";
 
-export default function CallsPage() {
-  const [calls, setCalls] = useState<any[]>([]);
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/calls")
-      .then((res) => res.json())
-      .then(setCalls);
-  }, []);
+export default async function CallsPage() {
+  const calls = await fetchCalls();
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold">
-          Call History
-        </h1>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-6">
+        Call History
+      </h1>
 
-        <div className="bg-white rounded-2xl shadow">
-          {calls.map((call) => (
-            <Link
-              key={call.id}
-              href={`/?id=${call.id}`}
-              className="flex justify-between p-4 border-b hover:bg-gray-50"
-            >
+      <div className="space-y-4">
+        {calls.map((call: any) => (
+          <Link
+            key={call.id}
+            href={`/?id=${call.id}`}
+            className="block bg-white p-4 rounded-2xl shadow hover:shadow-md transition"
+          >
+            <div className="flex justify-between">
               <div>
                 <p className="font-semibold">
-                  {call.filename}
+                  {call.summary?.slice(0, 80)}...
                 </p>
                 <p className="text-sm text-gray-500">
-                  {call.date}
+                  {new Date(call.created_at).toLocaleString()}
                 </p>
               </div>
 
-              <div className="flex gap-4">
-
-                <span
-                  className={`px-3 py-1 rounded text-xs ${
-                    call.risk_level === "high"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {call.risk_level}
-                </span>
-
-                <span className="text-sm">
-                  {call.sentiment}
-                </span>
+              <div className="text-right">
+                <p className="text-sm">
+                  Risk: {call.risk_level}
+                </p>
+                <p className="text-sm">
+                  Sentiment: {call.sentiment}
+                </p>
               </div>
-            </Link>
-          ))}
-        </div>
+            </div>
+          </Link>
+        ))}
       </div>
-    </main>
+    </div>
   );
 }
