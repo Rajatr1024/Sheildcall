@@ -25,7 +25,7 @@ export default async function Home({
     risk_flags,
     confidence,
     transcript,
-    conversation_analytics,
+    conversation_analytics, 
     insights,
   } = data;
   
