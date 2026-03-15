@@ -52,3 +52,13 @@ export async function fetchLatest() {
 
   return res.json();
 }
+
+export async function fetchEscalations() {
+
+  const res = await fetch(
+    "http://localhost:8000/escalations",
+    { cache: "no-store" }
+  );
+
+  return res.json();
+}

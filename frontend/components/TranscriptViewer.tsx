@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
+import { isRiskText } from "@/lib/riskDetection";
 
 type TranscriptSegment = {
   speaker: string;
   text: string;
-  start: number;
-  end: number;
+  start?: number;
+  end?: number;
 };
 
 type TranscriptViewerProps = {
-  transcript: TranscriptSegment[];
+  transcript?: TranscriptSegment[];
   currentTime?: number;
   onSeek?: (time: number) => void;
 };
@@ -21,61 +22,69 @@ const speakerColors: Record<string, string> = {
 };
 
 export default function TranscriptViewer({
-  transcript,
+  transcript = [],
   currentTime = 0,
   onSeek,
 }: TranscriptViewerProps) {
+
   useEffect(() => {
     const active = document.querySelector(".active-segment");
+
     active?.scrollIntoView({
       behavior: "smooth",
       block: "center",
     });
   }, [currentTime]);
 
+  if (!transcript.length) {
+    return (
+      <div className="bg-white p-4 rounded-2xl shadow">
+        No transcript available.
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-4 rounded-2xl shadow h-112.5 overflow-y-auto">
-      {transcript.map((seg: TranscriptSegment, i: number) => {
+      {transcript.map((seg, i) => {
+
         const active =
-           typeof seg.start === "number" &&
-           typeof seg.end === "number" &&
-           currentTime >= seg.start &&
-           currentTime <= seg.end;
+          typeof seg.start === "number" &&
+          typeof seg.end === "number" &&
+          currentTime >= seg.start &&
+          currentTime <= seg.end;
 
         const speakerStyle =
           speakerColors[seg.speaker] ??
           "bg-gray-50 border-l-4 border-gray-300";
 
+        const isRisk = isRiskText(seg.text ?? "");
+
         return (
           <div
             key={i}
-            onClick={() => onSeek?.(seg.start)}
-            className={`p-3 rounded mb-3 cursor-pointer transition ${
-              speakerStyle
-            } ${
-              active
-                ? "active-segment ring-2 ring-blue-400"
-                : ""
-            }`}
+            onClick={() => seg.start !== undefined && onSeek?.(seg.start)}
+            className={`p-3 rounded mb-3 cursor-pointer transition
+              ${speakerStyle}
+              ${active ? "active-segment ring-2 ring-blue-400" : ""}
+              ${isRisk ? "bg-red-50 border-l-4 border-red-500" : ""}
+            `}
           >
             <div className="text-sm font-semibold mb-1">
-              {seg.speaker}
+              {seg.speaker ?? "Unknown"}
             </div>
 
             <div className="text-sm">
+              {isRisk && "⚠ "}
               {seg.text}
             </div>
 
             <div className="text-xs text-gray-500 mt-1">
-  {typeof seg.start === "number" &&
-   typeof seg.end === "number" ? (
-    <>
-      {seg.start.toFixed(1)}s - {seg.end.toFixed(1)}s
-    </>
-  ) : (
-    "—"
-  )}
-</div>
+              {typeof seg.start === "number" &&
+               typeof seg.end === "number"
+                ? `${seg.start.toFixed(1)}s - ${seg.end.toFixed(1)}s`
+                : "—"}
+            </div>
           </div>
         );
       })}

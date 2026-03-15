@@ -13,32 +13,27 @@ def list_calls():
 
     calls = []
 
-    if not os.path.exists(CALLS_DIR):
-        return []
-
     for file in os.listdir(CALLS_DIR):
 
-        if file.endswith(".json"):
+        if not file.endswith(".json"):
+            continue
 
-            path = os.path.join(CALLS_DIR, file)
+        path = os.path.join(CALLS_DIR, file)
 
+        try:
             with open(path) as f:
                 data = json.load(f)
 
-                calls.append({
-                    "id": data.get("call_id"),
-                    "summary": data.get("summary"),
-                    "risk_level": data.get("insights", {}).get("risk_level"),
-                    "sentiment": data.get("insights", {}).get("customer_sentiment"),
-                    "created_at": data.get("created_at"),
-                    "audio_file": data.get("audio_file")
-                })
+            calls.append({
+                "id": data.get("call_id"),
+                "summary": data.get("summary"),
+                "risk_level": data.get("insights", {}).get("risk_level"),
+                "sentiment": data.get("insights", {}).get("customer_sentiment"),
+                "created_at": data.get("created_at")
+            })
 
-    # newest first
-    calls.sort(
-        key=lambda x: x["created_at"] or "",
-        reverse=True
-    )
+        except Exception as e:
+            print("Error reading file:", path, e)
 
     return calls
 
@@ -54,3 +49,30 @@ def get_call(call_id: str):
 
     with open(path) as f:
         return json.load(f)
+    
+    
+@router.get("/escalations")
+def get_escalations():
+
+    calls = []
+
+    for file in os.listdir(CALLS_DIR):
+
+        if file.endswith(".json"):
+
+            path = os.path.join(CALLS_DIR, file)
+
+            with open(path) as f:
+                data = json.load(f)
+
+                if data["insights"]["risk_level"] == "High":
+
+                    calls.append({
+                        "id": data["call_id"],
+                        "summary": data["summary"],
+                        "sentiment": data["insights"]["customer_sentiment"],
+                        "risk": data["insights"]["risk_level"],
+                        "created_at": data["created_at"]
+                    })
+
+    return calls
