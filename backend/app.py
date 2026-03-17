@@ -1,3 +1,5 @@
+import json
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -27,36 +29,44 @@ app.mount(
 # Latest fallback endpoint (keep for dashboard default)
 @app.get("/latest")
 def get_latest_call():
-    return {
-        "summary": "Test summary",
-        "sentiment": {"overall": "neutral", "confidence": 0.8},
-        "risk_flags": [],
-        "confidence": {"overall_score": 0.75},
-        "conversation_analytics": {
-            "talk_ratio": {
-                "SPEAKER_00": 0.6,
-                "SPEAKER_01": 0.4
-            },
-            "total_silence_seconds": 5,
-            "interruptions": 1,
-        },
-        "insights": {
-            "call_type": "general",
-            "risk_level": "low",
-            "customer_sentiment": "neutral",
-            "agent_dominance": False,
-            "escalation_required": False,
-        },
-        "transcript": [
-            {"speaker": "SPEAKER_00", "text": "Hello"},
-            {"speaker": "SPEAKER_01", "text": "Hi there"},
-        ],
-    }
+    folder = "storage/processed_calls"
+
+    if not os.path.exists(folder):
+        return {"error": "No processed calls"}
+
+    files = os.listdir(folder)
+    latest_file = max(
+    files,
+    key=lambda x: os.path.getmtime(os.path.join(folder, x))
+)
+    
+    if not files:
+        return {"error": "No calls found"}
+
+    # ✅ pick latest by time (NOT name)
+    latest_file = max(
+        files,
+        key=lambda x: os.path.getmtime(os.path.join(folder, x))
+    )
+
+    with open(os.path.join(folder, latest_file)) as f:
+        data = json.load(f)
+        
+    if data.get("status") == "processing":
+        return {"status": "processing"}
+    
+    if data.get("status") == "failed":
+        return {"status": "failed"}
+
+    return data
 
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",  # 🔥 ADD THIS
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

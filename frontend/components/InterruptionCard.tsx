@@ -1,18 +1,16 @@
-type Props = {
-  count: number;
-};
-
-export default function InterruptionCard({
-  count,
-}: Props) {
+export default function InterruptionCard({ count }: { count: number }) {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow">
-      <h2 className="font-semibold">
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+      <h3 className="text-sm font-semibold mb-3 text-gray-700">
         Interruptions
-      </h2>
+      </h3>
 
-      <p className="text-2xl font-bold mt-2">
+      <div className="text-3xl font-bold text-gray-900">
         {count}
+      </div>
+
+      <p className="text-xs text-gray-500 mt-2">
+        Detected speaker overlaps
       </p>
     </div>
   );

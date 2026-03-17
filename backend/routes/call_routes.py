@@ -8,32 +8,29 @@ CALLS_DIR = "storage/processed_calls"
 
 
 # GET /calls → list all calls
-@router.get("/calls")
-def list_calls():
+def get_calls():
+    if not os.path.exists(CALLS_DIR):
+        return []
+
+    files = os.listdir(CALLS_DIR)
 
     calls = []
 
-    for file in os.listdir(CALLS_DIR):
-
-        if not file.endswith(".json"):
-            continue
-
+    for file in files:
         path = os.path.join(CALLS_DIR, file)
 
-        try:
-            with open(path) as f:
-                data = json.load(f)
+        with open(path) as f:
+            data = json.load(f)
 
-            calls.append({
-                "id": data.get("call_id"),
-                "summary": data.get("summary"),
-                "risk_level": data.get("insights", {}).get("risk_level"),
-                "sentiment": data.get("insights", {}).get("customer_sentiment"),
-                "created_at": data.get("created_at")
-            })
+        calls.append({
+            "id": data.get("call_id"),
+            "summary": data.get("summary"),
+            "risk_level": data.get("insights", {}).get("risk_level"),
+            "date": data.get("created_at"),
+        })
 
-        except Exception as e:
-            print("Error reading file:", path, e)
+    # latest first
+    calls.sort(key=lambda x: x["date"], reverse=True)
 
     return calls
 
@@ -41,15 +38,13 @@ def list_calls():
 # GET /call/{id} → single call
 @router.get("/call/{call_id}")
 def get_call(call_id: str):
-
-    path = f"{CALLS_DIR}/{call_id}.json"
+    path = f"storage/processed_calls/{call_id}.json"
 
     if not os.path.exists(path):
         return {"error": "Call not found"}
 
     with open(path) as f:
         return json.load(f)
-    
     
 @router.get("/escalations")
 def get_escalations():

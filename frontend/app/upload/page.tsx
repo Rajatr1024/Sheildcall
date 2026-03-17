@@ -9,25 +9,42 @@ export default function UploadPage() {
   const router = useRouter();
 
   const handleUpload = async () => {
-    if (!file) return;
+  if (!file) {
+    alert("Please select a file");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-    try {
-      await fetch("http://127.0.0.1:8000/upload", {
-        method: "POST",
-        body: formData,
-      });
+  try {
+    const res = await fetch("http://127.0.0.1:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-      router.push("/processing");
-    } catch (err) {
-      console.error("Upload failed");
-      setLoading(false);
+    console.log("Response:", res);
+
+    if (!res.ok) {
+      throw new Error("Upload failed");
     }
-  };
+
+    const data = await res.json();
+    console.log("Success:", data);
+
+    alert("Upload successful!");
+
+    // redirect
+    router.push("/processing");
+
+  } catch (err) {
+    console.error("Upload error:", err);
+    alert("Upload failed");
+    setLoading(false);
+  }
+};
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">

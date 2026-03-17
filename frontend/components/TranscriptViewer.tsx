@@ -62,30 +62,35 @@ export default function TranscriptViewer({
 
         return (
           <div
-            key={i}
-            onClick={() => seg.start !== undefined && onSeek?.(seg.start)}
-            className={`p-3 rounded mb-3 cursor-pointer transition
-              ${speakerStyle}
-              ${active ? "active-segment ring-2 ring-blue-400" : ""}
-              ${isRisk ? "bg-red-50 border-l-4 border-red-500" : ""}
-            `}
-          >
-            <div className="text-sm font-semibold mb-1">
-              {seg.speaker ?? "Unknown"}
-            </div>
+  key={i}
+  onClick={() => {
+  if (typeof seg.start === "number") {
+    onSeek?.(seg.start);
+  }
+}}
+  className={`p-4 rounded-lg mb-3 cursor-pointer transition border ${
+    active
+      ? "border-blue-500 bg-blue-50"
+      : isRisk
+      ? "border-red-200 bg-red-50"
+      : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+  }`}
+>
+  <div className="flex justify-between items-center mb-1">
+    <span className="text-xs font-semibold text-gray-500">
+      {seg.speaker}
+    </span>
 
-            <div className="text-sm">
-              {isRisk && "⚠ "}
-              {seg.text}
-            </div>
+    <span className="text-xs text-gray-400">
+      {typeof seg.start === "number" ? `${seg.start.toFixed(1)}s` : ""}
+    </span>
+  </div>
 
-            <div className="text-xs text-gray-500 mt-1">
-              {typeof seg.start === "number" &&
-               typeof seg.end === "number"
-                ? `${seg.start.toFixed(1)}s - ${seg.end.toFixed(1)}s`
-                : "—"}
-            </div>
-          </div>
+  <p className="text-sm text-gray-800 leading-relaxed">
+    {isRisk && "⚠️ "}
+    {seg.text}
+  </p>
+</div>
         );
       })}
     </div>

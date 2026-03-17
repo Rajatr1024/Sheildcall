@@ -1,0 +1,39 @@
+{
+  "summary": "Customer reported suspicious transaction.",
+  "sentiment": {
+    "overall": "negative",
+    "confidence": 0.9
+  },
+  "risk_flags": [
+    "fraud"
+  ],
+  "confidence": {
+    "overall_score": 0.85
+  },
+  "conversation_analytics": {
+    "talk_ratio": {
+      "SPEAKER_00": 0.6,
+      "SPEAKER_01": 0.4
+    },
+    "total_silence_seconds": 2,
+    "interruptions": 1
+  },
+  "insights": {
+    "call_type": "fraud",
+    "risk_level": "high",
+    "customer_sentiment": "negative",
+    "agent_dominance": false,
+    "escalation_required": true
+  },
+  "transcript": [
+    {
+      "speaker": "SPEAKER_01",
+      "text": "I didn\u2019t make this payment",
+      "start": 0,
+      "end": 3
+    }
+  ],
+  "call_id": "f4fa55b3-7e97-4bf3-8b78-9a91465429f0",
+  "created_at": "2026-03-17T16:18:02.306223",
+  "audio_file": "f4fa55b3-7e97-4bf3-8b78-9a91465429f0.wav"
+}

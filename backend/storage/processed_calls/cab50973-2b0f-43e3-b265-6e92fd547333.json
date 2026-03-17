@@ -1,0 +1,40 @@
+{
+  "summary": "Customer reported suspicious transaction.",
+  "sentiment": {
+    "overall": "negative",
+    "confidence": 0.9
+  },
+  "risk_flags": [
+    "fraud",
+    "unauthorized transaction"
+  ],
+  "confidence": {
+    "overall_score": 0.87
+  },
+  "conversation_analytics": {
+    "talk_ratio": {
+      "SPEAKER_00": 0.6,
+      "SPEAKER_01": 0.4
+    },
+    "total_silence_seconds": 2.5,
+    "interruptions": 1
+  },
+  "insights": {
+    "call_type": "fraud report",
+    "risk_level": "high",
+    "customer_sentiment": "negative",
+    "agent_dominance": false,
+    "escalation_required": true
+  },
+  "transcript": [
+    {
+      "speaker": "SPEAKER_01",
+      "text": "I see a transaction I didn\u2019t make",
+      "start": 0,
+      "end": 3
+    }
+  ],
+  "call_id": "cab50973-2b0f-43e3-b265-6e92fd547333",
+  "created_at": "2026-03-17T15:42:34.359367",
+  "audio_file": "cab50973-2b0f-43e3-b265-6e92fd547333.wav"
+}
