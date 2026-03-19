@@ -1,0 +1,40 @@
+{
+  "summary": "Call processed at 2026-03-18T12:46:18.965749",
+  "status": "completed",
+  "sentiment": {
+    "overall": "negative",
+    "confidence": 0.9
+  },
+  "risk_flags": [
+    "fraud"
+  ],
+  "confidence": {
+    "overall_score": 0.92
+  },
+  "conversation_analytics": {
+    "talk_ratio": {
+      "SPEAKER_00": 0.5,
+      "SPEAKER_01": 0.5
+    },
+    "total_silence_seconds": 0,
+    "interruptions": 0
+  },
+  "insights": {
+    "call_type": "processing",
+    "risk_level": "low",
+    "customer_sentiment": "neutral",
+    "agent_dominance": false,
+    "escalation_required": false
+  },
+  "transcript": [
+    {
+      "speaker": "SPEAKER_01",
+      "text": "Unique call generated at 2026-03-18T12:46:18.965749",
+      "start": 0,
+      "end": 3
+    }
+  ],
+  "call_id": "512d4875-287f-47d4-ba6c-0dc2a996c59b",
+  "created_at": "2026-03-18T12:46:15.673532",
+  "audio_file": "512d4875-287f-47d4-ba6c-0dc2a996c59b.wav"
+}

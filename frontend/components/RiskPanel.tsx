@@ -1,10 +1,12 @@
 type Props = {
-  sentiment: { overall: string };
-  riskFlags: string[];
+  sentiment?: any;
+  riskFlags?: string[];
 };
 
 export default function RiskPanel({ sentiment, riskFlags }: Props) {
-  const riskLevel = riskFlags.length > 0 ? "High" : "Low";
+  const safeRiskFlags = riskFlags || [];
+
+const riskLevel = safeRiskFlags.length > 0 ? "High" : "Low";
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition">

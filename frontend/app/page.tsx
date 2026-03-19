@@ -19,39 +19,28 @@ export default async function Home({
 
   const data = await fetchCallData(id);
 
-const safeData = data && !data.error
-  ? data
-  : {
-      summary: "No data yet",
-      sentiment: { overall: "neutral" },
-      risk_flags: [],
-      confidence: { overall_score: 0 },
-      transcript: [],
-      conversation_analytics: {
-        talk_ratio: {},
-        total_silence_seconds: 0,
-        interruptions: 0,
-      },
-      insights: {
-        call_type: "N/A",
-        risk_level: "low",
-        customer_sentiment: "neutral",
-        agent_dominance: false,
-        escalation_required: false,
-      },
-      audio_file: null,
-    };
+  // 🔴 HANDLE STATES PROPERLY
 
-  const {
-  summary,
-  sentiment,
-  risk_flags,
-  confidence,
-  transcript,
-  conversation_analytics,
-  insights,
-  audio_file,
-} = safeData;
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Failed to load data
+      </div>
+    );
+  }
+
+  
+
+  // ✅ SAFE DESTRUCTURING
+
+  const summary = data.summary || "—";
+  const sentiment = data.sentiment || {};
+  const risk_flags = data.risk_flags || [];
+  const confidence = data.confidence || {};
+  const transcript = data.transcript || [];
+  const conversation_analytics = data.conversation_analytics || {};
+  const insights = data.insights || {};
+  const audio_file = data.audio_file || null;
 
   const audioUrl = audio_file
     ? `http://localhost:8000/audio/${audio_file}`
@@ -95,6 +84,18 @@ const safeData = data && !data.error
           </p>
         </div>
 
+        {data.status === "processing" && (
+  <div className="bg-blue-50 border border-blue-200 text-blue-600 px-4 py-3 rounded-lg">
+    Processing in progress...
+  </div>
+)}
+
+{data.status === "failed" && (
+  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+    Processing failed. Showing partial data.
+  </div>
+)}
+
         {/* TOP CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <SummaryCard summary={summary} />
@@ -111,10 +112,14 @@ const safeData = data && !data.error
               Audio Playback
             </h3>
 
-            {audioUrl && (
+            {audioUrl ? (
               <audio controls className="w-full">
                 <source src={audioUrl} />
               </audio>
+            ) : (
+              <div className="text-sm text-gray-400">
+                No audio available
+              </div>
             )}
           </div>
 

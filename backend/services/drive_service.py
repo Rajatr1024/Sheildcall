@@ -41,8 +41,8 @@ from google.auth.transport.requests import Request
 # ===== CONFIG =====
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 
-INPUT_FOLDER_ID = "PASTE_INPUT_FOLDER_ID"
-OUTPUT_FOLDER_ID = "PASTE_OUTPUT_FOLDER_ID"
+INPUT_FOLDER_ID = "1crxF2qLyR0awpUCcvrNIV_u8Mtjw6Bsp"
+OUTPUT_FOLDER_ID = "1o7RR7YdmY83eEGDpFEjV4lkCPiJRfRZC"
 
 
 # ===== AUTH =====
@@ -53,20 +53,22 @@ def get_drive_service():
         with open("token.pickle", "rb") as token:
             creds = pickle.load(token)
 
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+    if creds and creds.expired and creds.refresh_token:
+        try:
             creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", SCOPES
-            )
-            creds = flow.run_local_server(port=0)
+        except Exception:
+            creds = None  # 🔥 force re-auth
+
+    if not creds or not creds.valid:
+        flow = InstalledAppFlow.from_client_secrets_file(
+            "credentials.json", SCOPES
+        )
+        creds = flow.run_local_server(port=0)
 
         with open("token.pickle", "wb") as token:
             pickle.dump(creds, token)
 
     return build("drive", "v3", credentials=creds)
-
 
 # ===== 3. UPLOAD AUDIO =====
 def upload_to_drive(file_path, filename):
@@ -74,7 +76,7 @@ def upload_to_drive(file_path, filename):
 
     file_metadata = {
         "name": filename,
-        "parents": ["1crxF2qLyR0awpUCcvrNIV_u8Mtjw6Bsp"]
+        "parents": [INPUT_FOLDER_ID]
     }
 
     media = MediaFileUpload(file_path, resumable=True)
@@ -84,6 +86,7 @@ def upload_to_drive(file_path, filename):
         media_body=media,
         fields="id"
     ).execute()
+    
 
     return file.get("id")
 
@@ -107,16 +110,17 @@ def download_transcript(service, file_id):
 def wait_for_transcript(filename, timeout=300):
     service = get_drive_service()
 
-    transcript_name = filename.replace(".mp3", ".json").replace(".wav", ".json")
+    base_name = os.path.splitext(filename)[0]
+    transcript_name = f"{base_name}.json"
 
     start_time = time.time()
 
     while time.time() - start_time < timeout:
 
         results = service.files().list(
-            q=f"name='{transcript_name}' and '{"1o7RR7YdmY83eEGDpFEjV4lkCPiJRfRZC"}' in parents",
-            fields="files(id, name)"
-        ).execute()
+    q=f"name='{transcript_name}' and '{OUTPUT_FOLDER_ID}' in parents",
+    fields="files(id, name)"
+).execute()
 
         files = results.get("files", [])
 

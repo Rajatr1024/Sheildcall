@@ -1,0 +1,28 @@
+{
+  "summary": "Processing...",
+  "status": "failed",
+  "sentiment": {
+    "overall": "neutral",
+    "confidence": 0
+  },
+  "risk_flags": [],
+  "confidence": {
+    "overall_score": 0
+  },
+  "conversation_analytics": {
+    "talk_ratio": {},
+    "total_silence_seconds": 0,
+    "interruptions": 0
+  },
+  "insights": {
+    "call_type": "",
+    "risk_level": "",
+    "customer_sentiment": "",
+    "agent_dominance": false,
+    "escalation_required": false
+  },
+  "transcript": [],
+  "call_id": "b922110a-29f4-4af1-a00c-d1da9d0640a4",
+  "created_at": "2026-03-18T13:14:53.506043",
+  "audio_file": "b922110a-29f4-4af1-a00c-d1da9d0640a4.wav"
+}

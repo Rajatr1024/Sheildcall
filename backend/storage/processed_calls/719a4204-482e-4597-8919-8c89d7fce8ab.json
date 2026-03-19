@@ -1,0 +1,30 @@
+{
+  "summary": "Processing...",
+  "status": "completed",
+  "sentiment": {
+    "overall": "neutral",
+    "confidence": 0
+  },
+  "risk_flags": [],
+  "confidence": {
+    "overall_score": 0
+  },
+  "conversation_analytics": {
+    "talk_ratio": {},
+    "total_silence_seconds": 0,
+    "interruptions": 0
+  },
+  "insights": {
+    "call_type": "",
+    "risk_level": "",
+    "customer_sentiment": "",
+    "agent_dominance": false,
+    "escalation_required": false
+  },
+  "transcript": [],
+  "call_id": "719a4204-482e-4597-8919-8c89d7fce8ab",
+  "created_at": "2026-03-18T14:22:23.817020",
+  "audio_file": "719a4204-482e-4597-8919-8c89d7fce8ab.wav",
+  "error": "name 'convert_to_wav' is not defined",
+  "file": "test1.m4a"
+}
